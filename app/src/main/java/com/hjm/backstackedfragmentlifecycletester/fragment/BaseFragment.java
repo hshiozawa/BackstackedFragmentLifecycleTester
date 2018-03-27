@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ abstract public class BaseFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        log("onCreate()");
         if (savedInstanceState != null) {
             isStopped = savedInstanceState.getBoolean(STOPPED, false);
         }
@@ -30,6 +32,7 @@ abstract public class BaseFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        log("onCreateView()");
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
         TextView text = view.findViewById(R.id.message);
@@ -39,8 +42,15 @@ abstract public class BaseFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        log("onStart()");
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
+        log("onResume()");
 
         final Fragment nextFragment = getNextFragment();
         if (nextFragment != null) {
@@ -49,14 +59,34 @@ abstract public class BaseFragment extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        log("onPause()");
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
+        log("onStop()");
         isStopped = true;
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        log("onSavedInstanceState()");
         outState.putBoolean(STOPPED, isStopped);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        log("onDestroyView()");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        log("onDestroy()");
     }
 
     private void postReplaceFragment(@NonNull final Fragment fragment) {
@@ -65,6 +95,10 @@ abstract public class BaseFragment extends Fragment {
             @Override
             public void run() {
                 if (!isStopped) {
+                    String message = "replace " + BaseFragment.this.getClass().getSimpleName()
+                            + " to " + fragment.getClass().getSimpleName();
+
+                    log(message);
                     replaceFragment(fragment);
                 }
             }
@@ -79,5 +113,9 @@ abstract public class BaseFragment extends Fragment {
         ft.replace(R.id.fragment_container, fragment);
         ft.addToBackStack(null);
         ft.commit();
+    }
+
+    private void log(String message) {
+        Log.i(getClass().getName(), message);
     }
 }
