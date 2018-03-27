@@ -1,4 +1,4 @@
 package com.hjm.backstackedfragmentlifecycletester.fragment;
 
-public class FragmentA extends BaseFragment {
+public class FragmentB extends BaseFragment {
 }
