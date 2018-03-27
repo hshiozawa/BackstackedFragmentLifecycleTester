@@ -15,14 +15,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        replaceFragment(new FragmentA());
+        if (savedInstanceState == null) {
+            startFragment(new FragmentA());
+        }
     }
 
-    private void replaceFragment(Fragment fragment) {
+    void startFragment(Fragment fragment) {
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction ft = manager.beginTransaction();
         ft.replace(R.id.fragment_container, fragment);
-        ft.addToBackStack(null);
         ft.commit();
     }
 }
